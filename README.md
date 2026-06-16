@@ -6,5 +6,6 @@ Spred attempts to extend the structure of Ed to the editing of spreadsheets.
 
 ## Commands
 
-```Q```	Quits the program.
-```q```	Quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
+```Q``` Quits the program.
+
+```q``` Quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
