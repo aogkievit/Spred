@@ -9,3 +9,13 @@ Spred attempts to extend the structure of Ed to the editing of spreadsheets.
 ```Q``` Quits the program.
 
 ```q``` Quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
+
+## Format
+
+The file format used by Spred is extremely simple columns are divided by colons, ```:```, and rows are divided by line-breaks.  Colons employed in the spreadsheet itself are preceded by a backslash, ```\:```, and backslashes are treated similarly, ```\\```.
+
+Once I finish the program itself, I intend to prepare a few scripts to convert between this format and more common spreadsheet formats.
+
+## Support
+
+At present, Spred only supports Linux, but once I have finished the program, I intend to find alternatives for the few parts of the code that shall be incompatible with Windows.
