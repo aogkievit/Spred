@@ -6,9 +6,13 @@ Spred attempts to extend the structure of Ed to the editing of spreadsheets.
 
 ## Commands
 
-```Q``` Quits the program.
+```H``` enables error messages.
 
-```q``` Quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
+```P``` enables command prompt.
+
+```Q``` quits the program.
+
+```q``` quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
 
 ## Format
 

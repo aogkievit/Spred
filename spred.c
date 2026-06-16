@@ -9,7 +9,7 @@ struct String {
 	size_t szu; // Size Used
 };
 
-const char *prompt = "*";
+static char *prompt = "*";
 const char *error = "?\n";
 
 static struct termios terminalConfig;
@@ -20,30 +20,41 @@ static char optionHelp = 0;
 
 static char saved = 1;
 static char fq = 0;
+static int lastError = 0;
 
 static int
 processCommand(struct String inLine)
 {
-	switch (*inLine.str) {
-		case 'Q':
-			if (inLine.str[1] == '\n') return 1;
-			else {
-				fputs(error, stderr);
+	if (inLine.szu == 2) {
+		switch (*inLine.str) {
+			case 'H':
+				optionHelp = !optionHelp;
 				return 0;
-			}
-			
-		case 'q':
-			if ((saved || fq) && inLine.str[1] == '\n') return 1;
-			else {
-				if (inLine.str[1] == '\n') fq = 1;
-				fputs(error, stderr);
+
+			case 'P': 
+				optionPrompt = !optionPrompt;
 				return 0;
-			}
+		
+			case 'Q':
+				return 1;
+
+			case 'q':
+				if (saved || fq) return 1;
+				else {
+					fq = 1;
+					fputs(error, stderr);
+					return 0;
+				}
 	
-		default:
-			fq = 0;
-			fputs(error, stderr);
-			return 0;
+			default:
+				fq = 0;
+				fputs(error, stderr);
+				return 0;
+		}
+	} else {
+		fq = 0;
+		fputs(error, stderr);
+		return 0;
 	}
 }
 
@@ -63,19 +74,19 @@ input(struct String *inLine)
 		
 		inLine->str[inLine->szu] = (char) c; ++inLine->szu;
 		
-		//if (inLine->szu == inLine->sz) {
-		//	char *p = malloc((inLine->sz + 20) * sizeof(char));
-		//	if (p == NULL) return 2;
-		//	
-		//	memcpy((void*) p, (void*) inLine->str, (inLine->sz + 20) * sizeof(char));
-		//	free(inLine->str); inLine->str = p;
-		//	inLine->sz = inLine->sz + 20;
-		//}
+		if (inLine->szu == inLine->sz) {
+			char *p = malloc((inLine->sz + 20) * sizeof(char));
+			if (p == NULL) return 2;
+			
+			memcpy((void*) p, (void*) inLine->str, (inLine->sz + 20) * sizeof(char));
+			free(inLine->str); inLine->str = p;
+			inLine->sz = inLine->sz + 20;
+		}
 	}
 	
 	if (c == EOF) return 2;
 	else {
-		inLine->str[inLine->szu] = '\n';
+		inLine->str[inLine->szu] = '\0';
 		++inLine->szu;
 		
 		return 0;
@@ -103,29 +114,17 @@ edit(void)
 	}
 }
 
-static int
-init(void)
-{
-	// TODO: Should only apply when inputing data
-	// if (tcgetattr(fileno(stdin), &terminalConfig)) return 1;
-	// terminalConfig.c_cc[VEOL] = '\t';
-	// if (tcsetattr(fileno(stdin), TCSANOW, &terminalConfig)) return 1;
-
-	// TODO: Register Signal Handlers
-
-	return 0;
-}
-	
-
 int
 main (int argc, char *argv[])
 {
 	// TODO: Handle Arguments
 
-	{
-		int r = init();
-		if (r) return r;
-	}
+	// TODO: Register Signal Handlers
+	
+	// TODO: Should only apply when inputing data
+	// if (tcgetattr(fileno(stdin), &terminalConfig)) return 1;
+	// terminalConfig.c_cc[VEOL] = '\t';
+	// if (tcsetattr(fileno(stdin), TCSANOW, &terminalConfig)) return 1;
 
 	return (edit() - 1);
 }
