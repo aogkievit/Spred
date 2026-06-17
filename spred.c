@@ -3,6 +3,13 @@
 #include <string.h>
 #include <termios.h>
 
+struct Address {
+	int fr; // First Row
+	int lr; // Last Row
+	int fc; // First Column
+	int lc; // Last Column
+};
+
 struct String {
 	char *str;
 	size_t sz; // Size
@@ -11,6 +18,7 @@ struct String {
 
 static char *prompt = "*";
 const char *error = "?\n";
+const char *errors[3] = {"", "Invalid address\n", "Warning: buffer modified\n"};
 
 static struct termios terminalConfig;
 
@@ -22,17 +30,56 @@ static char saved = 1;
 static char fq = 0;
 static int lastError = 0;
 
+/*
+ * ERRORS
+ * 0	No error
+ * 1	Invalid address
+ * 2	Warning: Buffer Modified
+ */
+ 
+static void
+doError(int err)
+{
+		if (!err) {
+			fq = 0;
+			return;
+		}
+		
+		lastError = err;
+		fputs(error, stderr);
+		if (optionHelp) fputs(errors[err], stderr);
+		
+		if (err != 2) fq = 0;
+		else fq = 1;
+		
+}
+ 
+static int
+makeAddress(char* str, struct Address *address)
+{
+	return 0;
+}
+
 static int
 processCommand(struct String inLine)
 {
+
+	struct Address address;
+	
 	if (inLine.szu == 2) {
 		switch (*inLine.str) {
 			case 'H':
 				optionHelp = !optionHelp;
+				doError(0);
+				return 0;
+				
+			case 'h':
+				fputs(errors[lastError], stderr);
 				return 0;
 
 			case 'P': 
 				optionPrompt = !optionPrompt;
+				doError(0);
 				return 0;
 		
 			case 'Q':
@@ -41,19 +88,20 @@ processCommand(struct String inLine)
 			case 'q':
 				if (saved || fq) return 1;
 				else {
-					fq = 1;
-					fputs(error, stderr);
+					doError(2);
 					return 0;
 				}
 	
 			default:
-				fq = 0;
-				fputs(error, stderr);
+				doError(1);			
 				return 0;
 		}
+	} else if ((*inLine.str > '/' && *inLine.str < ':') || *inLine.str == '^' || *inLine.str == '$') {
+		int index = makeAddress(inLine.str, &address);
+		if (!index) doError(1);
+		return 0;
 	} else {
-		fq = 0;
-		fputs(error, stderr);
+		doError(1);
 		return 0;
 	}
 }

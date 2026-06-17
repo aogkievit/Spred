@@ -8,11 +8,19 @@ Spred attempts to extend the structure of Ed to the editing of spreadsheets.
 
 ```H``` enables error messages.
 
+```h``` prints last error message.
+
 ```P``` enables command prompt.
 
 ```Q``` quits the program.
 
 ```q``` quits the program if (a) there are no unsaved changes or (b) the command has been entered twice in a row.
+
+## Errors
+
+```Invalid adress``` indicates the user did not input a valid address.  It also tends to appear when the user inputs an invalid command because movement to an address is the default command, so the program miscontrues an invalid command as an invalid address.
+
+```Warning: buffer modified``` indicates the user has attempted to undertake an action that would jeporadise unsaved data; repeating the same command will undertake the opertion regardless.  There are also equivalent commands that do not consider whether there is unsaved data, e.g. ```Q``` instead of ``q``.
 
 ## Format
 
